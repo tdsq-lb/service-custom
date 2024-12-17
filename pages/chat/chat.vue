@@ -13,6 +13,8 @@
       refresher-background="#f3f3f3"
       @refresherrefresh="onRefresh"
       @tap="handleInputBlur"
+      scroll-with-animation
+      :scroll-into-view="item"
       :scroll-top="scrollTop"
       :style="{
         height: scrollViewHeight + 'px',
@@ -80,6 +82,7 @@ import { CS4002, CS4005, CS4008 } from '@/utils/newsType.js'
 import { generateRandomString } from '@/utils/index.js'
 import { emote } from '@/utils/index.js'
 import { mapState } from 'vuex'
+import { watch } from 'vue'
 export default {
   data() {
     return {
@@ -94,7 +97,8 @@ export default {
       isAdd: false, // 是否开启 图片 拍照
       uploading: false, // 上传状态
       uploadSuccess: false, // 上传成功
-      uploadError: false // 上传失败
+      uploadError: false, // 上传失败
+      item: ''
     }
   },
   computed: {
@@ -110,6 +114,17 @@ export default {
       return this.scrollViewHeight
     }
   },
+  watch: {
+    chatHistoryList(newVal) {
+      console.log('chatHistoryList::newVal', newVal)
+      this.$nextTick(() => {
+        this.item = 'item-' + (newVal.length - 1)
+        console.log(this.item, '2222222item')
+      })
+    },
+    deep: true,
+    immediate: true
+  },
   onLoad(options) {
     console.log(options.custUserId, 'options') // 输出: 123
     if (this.userInfo && this.userInfo.isCustomerService == 1 && options.custUserId) {
@@ -117,8 +132,6 @@ export default {
       this.title = options.sendName
       this.custUserId = options.custUserId
     }
-
-    // this.updateHeight()
   },
 
   mounted() {
@@ -128,10 +141,7 @@ export default {
       CS4008.d.userId = this.custUserId
       sendSocketMessage(CS4008)
     }
-    // if (this.userInfo && this.userInfo.isCustomerService == 0) {
-    //   CS4008.d.userId = (this.closeUserObj && this.closeUserObj.csUserId) || 0
-    //   sendSocketMessage(CS4008)
-    // }
+
     this.$nextTick(() => {
       // this.getHistoryMsg()
       this.updateHeight()
@@ -182,13 +192,10 @@ export default {
             })
             .exec()
         }
-        // if (this.userInfo && this.userInfo.isCustomerService == 1) {
-        //   tabBarHeight += 40
-        // }
-        tabBarHeight += 45
-        // // 设置 scroll-view 高度为屏幕高度减去 tabBar 高度
-        // this.scrollViewHeight = screenHeight - tabBarHeight
-        this.scrollToBottom()
+        // tabBarHeight += 50
+        // // // 设置 scroll-view 高度为屏幕高度减去 tabBar 高度
+        // // this.scrollViewHeight = screenHeight - tabBarHeight
+        // this.scrollToBottom()
         this.$set(this, 'scrollViewHeight', screenHeight - tabBarHeight)
         console.log('scrollViewHeight', this.scrollViewHeight)
       })
@@ -223,10 +230,6 @@ export default {
         .select('.box-1')
         .boundingClientRect(rect => {
           console.log('box-1的高度:', rect.height)
-          // this.scrollTop = rect.height
-          // this.$nextTick(() => {
-          //   this.$set(this, 'scrollTop', rect.height)
-          // })
           this.$set(this, 'scrollTop', rect.height)
         })
         .exec()
@@ -265,12 +268,6 @@ export default {
       this.isFocus = true
       this.isEmote = false
       this.isAdd = false
-      // this.updateHeight()
-      // this.scrollToBottom()
-      this.$nextTick(() => {
-        // this.updateHeight()
-        // this.scrollToBottom()
-      })
     },
     // 处理 input @blur
     handleInputBlur() {
@@ -278,14 +275,7 @@ export default {
         this.isFocus = false
         this.isEmote = false
         this.isAdd = false
-        // this.updateHeight()
-        // this.scrollToBottom()
       }, 0)
-
-      this.$nextTick(() => {
-        // this.updateHeight()
-        // this.scrollToBottom()
-      })
     },
     // 处理 emote @click 事件 延时处理
     handleBtnEmote() {
@@ -293,13 +283,7 @@ export default {
         this.isFocus = false
         this.isEmote = true
         this.isAdd = false
-        // this.updateHeight()
-        // this.scrollToBottom()
       }, 10)
-      this.$nextTick(() => {
-        // this.updateHeight()
-        // this.scrollToBottom()
-      })
     },
     // 处理 add @click 事件 延时处理
     handleBtnAdd() {
@@ -307,13 +291,7 @@ export default {
         this.isFocus = false
         this.isEmote = false
         this.isAdd = true
-        // this.updateHeight()
-        // this.scrollToBottom()
       }, 10)
-      this.$nextTick(() => {
-        // this.updateHeight()
-        // this.scrollToBottom()
-      })
     },
     handleSendCS4002(type, imgUrl) {
       uni.showLoading({
@@ -609,7 +587,7 @@ page {
 }
 
 .talk-list {
-  padding-bottom: 20rpx;
+  padding-bottom: 80rpx;
 
   /* 消息项，基础类 */
   .item {

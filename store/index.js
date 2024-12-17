@@ -42,7 +42,7 @@ const store = createStore({
       state.chatUserList = newArr
     },
     SET_CHAT_HISTORY_LIST(state, payload) {
-      // console.log('state, payload', state, payload)
+      // console.log('SET_CHAT_HISTORY_LIST, payload', payload)
       const arr = state.chatHistoryList
       if (payload.type == 'push') {
         arr.push(payload.message)
@@ -61,6 +61,7 @@ const store = createStore({
 
       // 使用 sort() 方法对日期进行升序排序
       newArr.sort((a, b) => new Date(a.sendTime) - new Date(b.sendTime))
+      // console.log('newArr',newArr)
       state.chatHistoryList = newArr
 
       if (payload.type == 'clear') {

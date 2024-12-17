@@ -79,7 +79,8 @@ export default {
       this.enabled = false
       this.$store.commit('SET_CHAT_HISTORY_LIST', { type: 'clear' })
       this.$store.commit('SET_CHAT_USER_LIST', { type: 'flag', message: item.sendTime })
-      this.$store.commit('SET_CURRENT_SEND_USERID', item.sendUser)
+      // this.$store.commit('SET_CURRENT_SEND_USERID', item.sendUser)
+      this.$store.commit('SET_CURRENT_SEND_USERID', a)
       uni.navigateTo({
         url: `/pages/chat/chat?custUserId=${a}&sendName=${b}`
       })
