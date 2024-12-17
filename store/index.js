@@ -2,6 +2,7 @@ import { createStore } from 'vuex'
 const store = createStore({
   state: {
     userInfo: null,
+    currentSendUserId: null,
     isRegister: false, // 是否注册完成,通过这个参数 判断 是否可以 发送消息
     chatUserList: [], // 聊天的用户列表
     chatHistoryList: [], // 聊天记录
@@ -17,30 +18,26 @@ const store = createStore({
     SET_USERINFO(state, payload) {
       state.userInfo = payload
     },
+    SET_CURRENT_SEND_USERID(state, payload) {
+      console.log('设置当前消息发送人==', payload)
+      state.currentSendUserId = payload
+    },
     SET_IS_REGISTER(state, payload) {
       // console.log('state, payload', state, payload)
       state.isRegister = payload
     },
     SET_CHAT_USER_LIST(state, payload) {
-      // const arr = state.chatUserList.concat(...payload)
-      // const uniqueMessages = arr.reduce((acc, curr) => {
-      //   // 检查是否已有该 msgid
-      //   const existing = acc.find(item => item.msgid === curr.msgid)
-      //   if (!existing) {
-      //     // 如果没有相同 msgid 的记录，直接添加
-      //     acc.push(curr)
-      //   } else {
-      //     // 如果已有相同 msgid 的记录，比较 sendTime 保留最新的
-      //     if (new Date(curr.sendTime) > new Date(existing.sendTime)) {
-      //       // 替换为 sendtime 更新的记录
-      //       const index = acc.indexOf(existing)
-      //       acc[index] = curr
-      //     }
-      //   }
-      //   return acc
-      // }, [])
-      // state.chatUserList = uniqueMessages
-      const newArr = payload
+      let newArr = null
+      if (payload.type == 'flag') {
+        newArr = state.chatUserList.map(item => {
+          if (item.sendTime == payload.message) {
+            item.isNew = false
+          }
+          return item
+        })
+      } else {
+        newArr = payload.message
+      }
       newArr.sort((a, b) => new Date(b.sendTime) - new Date(a.sendTime))
       state.chatUserList = newArr
     },
@@ -54,8 +51,9 @@ const store = createStore({
         arr.unshift(...payload.message)
       }
       // 去重
+      // console.log('aeeeee22222', arr)
       const newArr = arr.reduce((acc, curr) => {
-        if (!acc.some(item => item.msgId === curr.msgId)) {
+        if (!acc.some(item => item.msgId === curr.msgId && item.sendTime === curr.sendTime)) {
           acc.push(curr)
         }
         return acc

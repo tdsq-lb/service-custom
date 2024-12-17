@@ -12,6 +12,11 @@ function initSocketControl() {
     },
     fail(err) {
       console.log('链接失败=======>>>>', err)
+      uni.showToast({
+        title: 'WebSocket连接失败，请检查！',
+        icon: 'none',
+        duration: 5000
+      })
     }
   })
   // 监听 WebSocket 连接打开事件;开启发送消息
@@ -24,6 +29,11 @@ function initSocketControl() {
   })
   uni.onSocketError(function (res) {
     console.log('WebSocket连接打开失败，请检查！', res)
+    uni.showToast({
+      title: 'WebSocket连接打开失败，请检查！',
+      icon: 'none',
+      duration: 5000
+    })
   })
 }
 

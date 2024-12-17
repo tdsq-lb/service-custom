@@ -1,3 +1,14 @@
+export function findObjectWithId(list, userId) {
+  return list.some(item => item.sendUser === userId)
+}
+
+export function getCurrentPagePath() {
+  const pages = getCurrentPages() // 获取当前页面栈
+  const currentPage = pages[pages.length - 1] // 获取栈顶页面
+  const currentPagePath = currentPage.route // 获取当前页面的路径
+  return currentPagePath
+}
+
 /**
  * 生成随机 6位数的 字符串
  */

@@ -47,3 +47,10 @@ export const CS4005 = {
     pageSize: 10 //可选，每次返回数量
   }
 }
+
+// 与客服聊天=4008
+export const CS4008 = {
+  t: 400,
+  a: 4008,
+  d: {}
+}

@@ -25,12 +25,13 @@
               <!-- <text class="top_name">{{ item.receiveName }}</text>
               <text class="top_time">{{ item.receiveTime }}</text> -->
             </view>
-            <view class="bottom">
+            <view class="top grayTxtColor">
               <text>{{ item.message }}</text>
+              <text v-if="item.isNew" class="badge" style="">●</text>
             </view>
           </view>
         </view>
-        <view class="empty" v-if="chatUserList && chatUserList.length == 0">{{
+        <view class="empty grayTxtColor" v-if="chatUserList && chatUserList.length == 0">{{
           userInfo && userInfo.language == 'zh' ? '暂无新消息' : 'No new news at the moment'
         }}</view>
       </view>
@@ -76,6 +77,9 @@ export default {
         b = item.receiveName
       }
       this.enabled = false
+      this.$store.commit('SET_CHAT_HISTORY_LIST', { type: 'clear' })
+      this.$store.commit('SET_CHAT_USER_LIST', { type: 'flag', message: item.sendTime })
+      this.$store.commit('SET_CURRENT_SEND_USERID', item.sendUser)
       uni.navigateTo({
         url: `/pages/chat/chat?custUserId=${a}&sendName=${b}`
       })
@@ -90,6 +94,7 @@ page {
   // background-color: red;
   font-size: 28rpx;
 }
+
 .container {
   position: relative;
 
@@ -98,6 +103,10 @@ page {
     left: 50%;
     top: 40%;
     transform: translate(-50%, -40%);
+    // color: #959595;
+  }
+
+  .grayTxtColor {
     color: #959595;
   }
 }
@@ -113,7 +122,8 @@ page {
   border-bottom: 1rpx solid #d5d4d4;
 
   .avatar {
-    flex-shrink: 0; /* 不压缩 */
+    flex-shrink: 0;
+    /* 不压缩 */
     display: block;
     width: 96rpx;
     height: 96rpx;
@@ -125,43 +135,64 @@ page {
   .info {
     flex: 1;
     overflow: hidden;
+
     .top {
       display: flex;
       justify-content: space-between;
+
       &_name {
         font-size: 32rpx;
         // line-height: 32rpx;
         font-weight: 500;
         color: #10161b;
       }
+
       &_time {
         font-size: 24rpx;
         color: #bbbab4;
       }
-    }
 
-    .bottom {
-      margin-top: 10rpx;
-      font-weight: 500;
-      font-size: 26rpx;
-      // line-height: 24rpx;
-      color: #959595;
-      // display: -webkit-box;
-      // -webkit-box-orient: vertical;
-      // overflow: hidden;
-      // text-overflow: ellipsis;
-      // -webkit-line-clamp: 1;
-
-      display: flex;
-      flex-direction: column; /* 垂直方向 */
-      overflow: hidden;
-      text {
-        text-overflow: ellipsis;
-        overflow: hidden;
-        white-space: nowrap; /* 防止换行 */
-        text-align: left;
+      .badge {
+        color: red;
+        // display: flex;
+        // align-items: center;
+        // justify-content: center;
+        // font-size: 20rpx;
+        // // width: 20rpx;
+        // height: 20rpx;
+        // background-color: red;
+        // color: white;
+        // border-radius: 20rpx;
+        // padding: 5rpx;
       }
     }
+
+    // .bottom {
+    // 	margin-top: 10rpx;
+    // 	font-weight: 500;
+    // 	font-size: 26rpx;
+    // 	// line-height: 24rpx;
+
+    // 	// display: -webkit-box;
+    // 	// -webkit-box-orient: vertical;
+    // 	// overflow: hidden;
+    // 	// text-overflow: ellipsis;
+    // 	// -webkit-line-clamp: 1;
+
+    // 	display: flex;
+    // 	flex-direction: row;
+    // 	/* 垂直方向 */
+
+    // 	overflow: hidden;
+
+    // 	text {
+    // 		text-overflow: ellipsis;
+    // 		overflow: hidden;
+    // 		white-space: nowrap;
+    // 		/* 防止换行 */
+    // 		text-align: left;
+    // 	}
+    // }
   }
 }
 </style>

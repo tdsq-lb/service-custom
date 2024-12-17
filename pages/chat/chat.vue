@@ -76,7 +76,7 @@
 
 <script>
 import { sendSocketMessage } from '@/utils/socketControl.js'
-import { CS4002, CS4005 } from '@/utils/newsType.js'
+import { CS4002, CS4005, CS4008 } from '@/utils/newsType.js'
 import { generateRandomString } from '@/utils/index.js'
 import { emote } from '@/utils/index.js'
 import { mapState } from 'vuex'
@@ -117,17 +117,39 @@ export default {
       this.title = options.sendName
       this.custUserId = options.custUserId
     }
+
     // this.updateHeight()
   },
-  mounted() {
-    // this.$nextTick(() => {
-    //   this.getHistoryMsg()
-    //   // this.updateHeight()
-    // })
-    // this.getHistoryMsg()
-    this.updateHeight()
-  },
 
+  mounted() {
+    console.log('mounted::this.userInfo', this.userInfo)
+    if (this.userInfo && this.userInfo.isCustomerService == 1 && this.custUserId) {
+      // 客服 进入聊天和退出聊天 发 4008消息
+      CS4008.d.userId = this.custUserId
+      sendSocketMessage(CS4008)
+    }
+    // if (this.userInfo && this.userInfo.isCustomerService == 0) {
+    //   CS4008.d.userId = (this.closeUserObj && this.closeUserObj.csUserId) || 0
+    //   sendSocketMessage(CS4008)
+    // }
+    this.$nextTick(() => {
+      // this.getHistoryMsg()
+      this.updateHeight()
+    })
+    // this.getHistoryMsg()
+    // this.updateHeight()
+  },
+  onUnload() {
+    if (this.userInfo && this.userInfo.isCustomerService == 1 && this.custUserId) {
+      // 客服 进入聊天和退出聊天 发 4008消息
+      CS4008.d.userId = this.custUserId
+      sendSocketMessage(CS4008)
+    }
+    if (this.userInfo && this.userInfo.isCustomerService == 0) {
+      CS4008.d.userId = (this.closeUserObj && this.closeUserObj.csUserId) || 0
+      sendSocketMessage(CS4008)
+    }
+  },
   updated() {
     // 当 DOM 更新时，重新计算高度
     // console.log('updated')
@@ -160,17 +182,16 @@ export default {
             })
             .exec()
         }
-        if (this.userInfo && this.userInfo.isCustomerService == 1) {
-          tabBarHeight += 40
-        }
+        // if (this.userInfo && this.userInfo.isCustomerService == 1) {
+        //   tabBarHeight += 40
+        // }
+        tabBarHeight += 45
         // // 设置 scroll-view 高度为屏幕高度减去 tabBar 高度
         // this.scrollViewHeight = screenHeight - tabBarHeight
         this.scrollToBottom()
         this.$set(this, 'scrollViewHeight', screenHeight - tabBarHeight)
         console.log('scrollViewHeight', this.scrollViewHeight)
-    
       })
-      this.scrollToBottom()
     },
     // 上拉加载更多数据
     onRefresh() {
@@ -188,7 +209,7 @@ export default {
         CS4005.d.sendTime = this.chatHistoryList[0].sendTime
       } else {
         // CS4005.d.sendTime = new Date().getTime()
-        CS4005.d.sendTime = ''
+        CS4005.d.sendTime = null
       }
       CS4005.d.requestId = generateRandomString()
       CS4005.d.pageNum = this.pagingObj.pageNum
@@ -244,11 +265,11 @@ export default {
       this.isFocus = true
       this.isEmote = false
       this.isAdd = false
-      this.updateHeight()
+      // this.updateHeight()
       // this.scrollToBottom()
       this.$nextTick(() => {
         // this.updateHeight()
-        this.scrollToBottom()
+        // this.scrollToBottom()
       })
     },
     // 处理 input @blur
@@ -257,13 +278,13 @@ export default {
         this.isFocus = false
         this.isEmote = false
         this.isAdd = false
-        this.updateHeight()
+        // this.updateHeight()
         // this.scrollToBottom()
       }, 0)
 
       this.$nextTick(() => {
         // this.updateHeight()
-        this.scrollToBottom()
+        // this.scrollToBottom()
       })
     },
     // 处理 emote @click 事件 延时处理
@@ -272,12 +293,12 @@ export default {
         this.isFocus = false
         this.isEmote = true
         this.isAdd = false
-        this.updateHeight()
+        // this.updateHeight()
         // this.scrollToBottom()
       }, 10)
       this.$nextTick(() => {
         // this.updateHeight()
-        this.scrollToBottom()
+        // this.scrollToBottom()
       })
     },
     // 处理 add @click 事件 延时处理
@@ -286,8 +307,8 @@ export default {
         this.isFocus = false
         this.isEmote = false
         this.isAdd = true
-        this.updateHeight()
-        this.scrollToBottom()
+        // this.updateHeight()
+        // this.scrollToBottom()
       }, 10)
       this.$nextTick(() => {
         // this.updateHeight()
@@ -299,7 +320,12 @@ export default {
         title: '正在发送'
       })
       // 将当前发送信息 添加到消息列表。
-      CS4002.u = (this.closeUserObj && this.closeUserObj.csUserId) || this.custUserId //接收用户
+      console.log('this.closeUserObj', this.closeUserObj)
+      if (this.userInfo.isCustomerService == 1) {
+        CS4002.u = this.custUserId
+      } else {
+        CS4002.u = this.closeUserObj && this.closeUserObj.csUserId //接收用户
+      }
 
       CS4002.d = {
         requestId: generateRandomString(),
@@ -313,14 +339,11 @@ export default {
         CS4002.d.msgType = 1
         CS4002.d.message = this.content
       }
-      console.log('imgUrl,', imgUrl)
       // type 3 为上传图片
       if (type == 3) {
         CS4002.d.msgType = 3
         CS4002.d.message = imgUrl.data
       }
-
-      // this.$store.commit('SET_CHAT_HISTORY_LIST', { type: 'push', message: CS4002.d })
       this.$store.commit('SET_NEWS_OBJ', CS4002.d)
       this.$store.commit('SET_IS_REGISTER', false)
 
