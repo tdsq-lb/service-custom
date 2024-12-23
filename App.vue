@@ -37,11 +37,11 @@ export default {
   onShow: function () {
     console.log('App Show:::接收APP消息 并 初始化 socket')
     // const userObj = {
-    //   Authorization:
-    //     'Bearer eyJhbGciOiJIUzUxMiJ9.eyJuYW1lIjoidXNlcjMiLCJpZCI6InVzZXIzIiwiZXhwIjoxNzM0NTI2NTA4LCJpYXQiOjE3MzM5MjE3MDgsInNjb3BlIjpudWxsfQ.hHZMmdLmuzmKXD6muZ8w-xWJFCsgyuWi3x_x6QQgMUtnc3yTQPpQNKRadNFE8UpPf1zeSSmoy6cWYeIbgr25Hw',
-    //   userId: 'user3',
+    //   Authorization: '',
+    //   userId: '',
+    //   visitorId: 'visitor_' + '123456789',
     //   language: 'zh',
-    //   isCustomerService: 1,
+    //   isCustomerService: 0,
     //   logo: 'other/aaa_20240902162455A001.png'
     // }
     // this.$store.dispatch('asyncRegisterUser', userObj)
@@ -49,8 +49,14 @@ export default {
     window['CUSTOMER_SERVICE_MESSAGES'] = data => {
       const appMessagesData = JSON.parse(data)
       console.log('这里是 app 传递给我的消息', appMessagesData)
-      appMessagesData.isCustomerService = Number(appMessagesData.isCustomerService)
-      appMessagesData.Authorization = `Bearer ${appMessagesData.Authorization.replace(/"/g, '')}`
+      if (appMessagesData.Authorization != '') {
+        appMessagesData.Authorization = `Bearer ${appMessagesData.Authorization.replace(/"/g, '')}`
+      }
+      if (appMessagesData.isCustomerService == '') {
+        appMessagesData.isCustomerService = 0
+      } else {
+        appMessagesData.isCustomerService = Number(appMessagesData.isCustomerService)
+      }
       this.$store.dispatch('asyncRegisterUser', appMessagesData)
       initSocketControl()
     }

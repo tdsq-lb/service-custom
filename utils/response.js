@@ -14,6 +14,10 @@ function handleChatUserList(obj) {
 
   if (!findObjectWithId(chatUserList, userId)) {
     obj.isNew = true
+    obj.time = parseTime(obj.sendTime, '{y}-{m}-{d} {h}:{i}')
+    if (!obj.sendAvatar) {
+      obj.sendAvatar = 'avatar/2_20241029192954A002.png'
+    }
     chatUserList.push(obj)
     store.commit('SET_CHAT_USER_LIST', { type: 'set', message: chatUserList })
   } else {
@@ -74,6 +78,9 @@ function response(resData) {
             const result = d.chatUserList.map(item => {
               item.time = parseTime(item.sendTime, '{y}-{m}-{d} {h}:{i}')
               item.isNew = item.readFlag ? false : true
+              if (!item.sendAvatar) {
+                item.sendAvatar = 'avatar/2_20241029192954A002.png'
+              }
               return item
             })
             store.commit('SET_CHAT_USER_LIST', { type: 'set', message: result })

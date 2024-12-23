@@ -1,7 +1,7 @@
 let socketOpen = false
 import store from '@/store/index.js'
 import response from './response'
-import { CS1001 } from '@/utils/newsType.js'
+import { CS1001, CS1006 } from '@/utils/newsType.js'
 import { generateRandomString } from '@/utils/index.js'
 
 function initSocketControl() {
@@ -38,10 +38,17 @@ function initSocketControl() {
 }
 
 function handleSendCS1001() {
-  console.log('handleSendCS1001', store.state)
+  // console.log('handleSendCS1001', store.state)
   if (store.state && store.state.userInfo) {
-    CS1001.d = store.state.userInfo
-    sendSocketMessage(CS1001)
+    // console.log('store.state.userInfo',store.state.userInfo)
+    if (store.state.userInfo.userId == '') {
+      CS1006.d.visitorId = store.state.userInfo.visitorId
+      CS1006.d.language = store.state.userInfo.language
+      sendSocketMessage(CS1006)
+    } else {
+      CS1001.d = store.state.userInfo
+      sendSocketMessage(CS1001)
+    }
   }
 }
 

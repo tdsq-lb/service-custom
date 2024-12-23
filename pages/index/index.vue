@@ -20,7 +20,7 @@
           ></image>
           <view class="info">
             <view class="top">
-              <text class="top_name">{{ item.chatType == 1 ? item.sendName : item.receiveName }}</text>
+              <text class="top_name">{{ item.chatType == 1 ? item.sendName || item.sendUser : item.receiveName }}</text>
               <text class="top_time">{{ item.time }}</text>
               <!-- <text class="top_name">{{ item.receiveName }}</text>
               <text class="top_time">{{ item.receiveTime }}</text> -->
@@ -71,7 +71,7 @@ export default {
       let a, b
       if (item.chatType == 1) {
         a = item.sendUser
-        b = item.sendName
+        b = item.sendName || item.sendUser
       } else {
         a = item.receiveUser
         b = item.receiveName
@@ -146,6 +146,12 @@ page {
         // line-height: 32rpx;
         font-weight: 500;
         color: #10161b;
+
+        width: 60%;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+        -webkit-line-clamp: 1;
       }
 
       &_time {

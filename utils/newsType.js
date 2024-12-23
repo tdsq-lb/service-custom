@@ -5,6 +5,13 @@ export const CS1001 = {
   d: {}
 }
 
+// 游客注册
+export const CS1006 = {
+  t: 100, //消息类型
+  a: 1006,
+  d: {}
+}
+
 // 注册 客服
 export const CS1002 = {
   t: 100, //消息类型
