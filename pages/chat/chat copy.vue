@@ -82,6 +82,7 @@ import { CS4002, CS4005, CS4008 } from '@/utils/newsType.js'
 import { generateRandomString } from '@/utils/index.js'
 import { emote } from '@/utils/index.js'
 import { mapState } from 'vuex'
+import { watch } from 'vue'
 export default {
   data() {
     return {
@@ -119,7 +120,6 @@ export default {
       this.$nextTick(() => {
         this.item = 'item-' + (newVal.length - 1)
         console.log(this.item, '2222222item')
-        this.scrollToBottom()
       })
     },
     deep: true,
@@ -184,10 +184,14 @@ export default {
             .select('.box-2')
             .boundingClientRect(rect => {
               console.log('box-2 固定定位元素的高度:', rect.height)
-              tabBarHeight = rect.height + 100
+              tabBarHeight = rect.height + 40
             })
             .exec()
         }
+        // tabBarHeight += 50
+        // 设置 scroll-view 高度为屏幕高度减去 tabBar 高度
+        // this.scrollViewHeight = screenHeight - tabBarHeight
+        // this.scrollToBottom()
         this.$set(this, 'scrollViewHeight', screenHeight - tabBarHeight)
         console.log('scrollViewHeight', this.scrollViewHeight)
       })

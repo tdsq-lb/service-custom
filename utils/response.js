@@ -8,11 +8,12 @@ function handleChatUserList(obj) {
   //   ,1=客户发送给客服,2客服回复客户
   //   console.log('store.state.currentSendUserId==', store.state.currentSendUserId)
   var chatUserList = store.state.chatUserList
-  // let userId = obj.chatType == 1 ? obj.sendUser : obj.receiveUser
-  let userId = obj.chatType == 1 ? obj.receiveUser : obj.sendUser
+  let userId = obj.chatType == 1 ? obj.sendUser : obj.receiveUser
+  // let userId = obj.chatType == 1 ? obj.receiveUser : obj.sendUser
   console.log('findObjectWithId(chatUserList, obj.sendUser)', findObjectWithId(chatUserList, obj.userId))
 
   if (!findObjectWithId(chatUserList, userId)) {
+    obj.isNew = true
     chatUserList.push(obj)
     store.commit('SET_CHAT_USER_LIST', { type: 'set', message: chatUserList })
   } else {
@@ -165,7 +166,7 @@ function response(resData) {
             }
             return item
           })
-          console.log('4006,newNewsData', JSON.stringify(newNewsData))
+          // console.log('4006,newNewsData', JSON.stringify(newNewsData))
 
           store.commit('SET_CHAT_HISTORY_LIST', {
             type: 'unshift',
@@ -216,8 +217,8 @@ function response(resData) {
             if (store.state.userInfo.isCustomerService == 0) {
               if (newsObj.receiveUser != 0 && store.state.closeUserObj.csUserId == 0) {
                 store.commit('SET_CLOSE_USER_OBJ', {
-                  csUserId: newsObj.sendUser,
-                  custUserId: newsObj.receiveUser,
+                  csUserId: newsObj.receiveUser,
+                  custUserId: newsObj.sendUser,
                   logo: newsObj.sendAvatar
                 })
               }
